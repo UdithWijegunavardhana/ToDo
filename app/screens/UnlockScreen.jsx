@@ -18,7 +18,7 @@ const UnlockScreen = ({onUnlockSuccess}) => {
   const handleUnlock = () => {
     if (password === 'AbcD') {
       Alert.alert('Success', 'Todo list unlocked!');
-      dispatch(authSagaActions.login());
+      // dispatch(authSagaActions.login());
       onUnlockSuccess();
     } else {
       Alert.alert('Error', 'Incorrect password');
