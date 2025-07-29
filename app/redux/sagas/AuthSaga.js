@@ -1,11 +1,11 @@
-import {put, takeLatest} from 'redux-saga/effects';
+import {put, takeLatest, call} from 'redux-saga/effects';
 import {loginSuccess, loginFailure} from '../slices/AuthSlice';
 import {createAction} from '@reduxjs/toolkit';
 import {signInApi} from '../../api/auth.api';
 
 function* handleLogin(action) {
   try {
-    const response = yield call(signInApi, action.payload);
+    const response = yield* call(signInApi, action.payload);
     yield put(loginSuccess(response));
   } catch (error) {
     yield put(loginFailure(error.message || 'Login failed'));
