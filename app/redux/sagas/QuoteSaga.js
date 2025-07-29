@@ -21,7 +21,7 @@ function* handleFetchQuote() {
 }
 
 export function* quoteSaga() {
-  yield takeLatest(fetchQuoteRequest.type, handleFetchQuote);
+  yield takeLatest(quoteSagaActions.fetchQuoteRequest.type, handleFetchQuote);
 }
 
 export const quoteSagaActions = {
