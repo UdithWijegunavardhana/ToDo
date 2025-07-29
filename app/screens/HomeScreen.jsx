@@ -3,13 +3,11 @@ import {
   View,
   SafeAreaView,
   StyleSheet,
-  Modal,
-  Pressable,
   Text,
   TouchableOpacity,
-  FlatList,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 
 import {quoteSagaActions} from '../redux/sagas/QuoteSaga';
 import NoteInput from '../components/NoteInput';
@@ -19,11 +17,12 @@ import colors from '../theme/Colors';
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+
   const {data: quoteData, loading, error} = useSelector(state => state.quote);
 
   const [note, setNote] = useState('');
   const [todos, setTodos] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     dispatch(quoteSagaActions.fetchQuoteRequest());
@@ -33,7 +32,11 @@ const HomeScreen = () => {
     if (note.trim()) {
       setTodos([...todos, note]);
       setNote('');
-      setIsModalVisible(true);
+      navigation.navigate('Todo', {
+        todos,
+        onDelete: handleDelete,
+        onEdit: handleEdit,
+      });
     }
   };
 
@@ -63,38 +66,10 @@ const HomeScreen = () => {
         />
         <TouchableOpacity
           style={styles.viewTodosButton}
-          onPress={() => setIsModalVisible(true)}>
+          onPress={() => navigation.navigate('Todo')}>
           <Text style={styles.viewTodosText}>View Todos</Text>
         </TouchableOpacity>
       </View>
-      <Modal
-        visible={isModalVisible}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setIsModalVisible(false)}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalSheet}>
-            <View style={styles.modalHeader} />
-            <FlatList
-              data={todos}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({item, index}) => (
-                <TodoItem
-                  text={item}
-                  onDelete={() => handleDelete(index)}
-                  onEdit={() => handleEdit(index)}
-                />
-              )}
-              ListEmptyComponent={
-                <Text style={styles.emptyText}>No todos yet</Text>
-              }
-            />
-            <Pressable onPress={() => setIsModalVisible(false)}>
-              <Text style={styles.closeText}>Close</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
     </SafeAreaView>
   );
 };
